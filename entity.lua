@@ -4,13 +4,14 @@ function entity:create(x, y)
     local object = { x = x, y = y }
     setmetatable(object, {__index = self} )
 
+    object.control_component = control_component:create(object)
     object.graphics_component = graphics_component:create(object)
 
     return object
 end
 
 function entity:update()
-
+    self.control_component:update()
 end
 
 function entity:draw()

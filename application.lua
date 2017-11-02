@@ -6,6 +6,8 @@ require("world")
 require("map")
 require("entity")
 require("graphics_component")
+require("control_component")
+require("control")
 
 application = {
     font = love.graphics.newImageFont("assets/font.png",

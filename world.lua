@@ -11,7 +11,9 @@ function world:create()
 end
 
 function world:update()
-
+    for i, entity in pairs(self.entities) do
+        entity:update()
+    end
 end
 
 function world:draw()
