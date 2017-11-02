@@ -2,6 +2,10 @@ require("game")
 require("title_screen")
 require("observer")
 require("queue")
+require("world")
+require("map")
+require("entity")
+require("graphics_component")
 
 application = {
     font = love.graphics.newImageFont("assets/font.png",

@@ -1,5 +1,3 @@
-require("map")
-
 world = {}
 
 function world:create()
@@ -7,6 +5,7 @@ function world:create()
     setmetatable(object, {__index = self} )
 
     object.map = map:create()
+    object.entities = { entity:create(0, 0) }
 
     return object
 end
@@ -17,4 +16,8 @@ end
 
 function world:draw()
     self.map:draw()
+
+    for i, entity in pairs(self.entities) do
+        entity:draw()
+    end
 end

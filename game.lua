@@ -1,5 +1,3 @@
-require("world")
-
 game = {}
 
 function game:create(application, args)
