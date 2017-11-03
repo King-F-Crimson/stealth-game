@@ -5,7 +5,9 @@ function game:create(application, args)
     setmetatable(object, {__index = self})
 
     object.world = world:create()
-    object.zoom = 4
+    object.camera = camera:create()
+
+    object.camera:set_centered_entity(object.world.entities[1])
 
     object.listeners = {
 
@@ -24,7 +26,7 @@ end
 
 function game:draw()
     love.graphics.push()
-        love.graphics.scale(self.zoom)
+        self.camera:apply_transformation()
         self.world:draw()
     love.graphics.pop()
 end

@@ -8,6 +8,7 @@ require("entity")
 require("graphics_component")
 require("control_component")
 require("control")
+require("camera")
 
 application = {
     font = love.graphics.newImageFont("assets/font.png",

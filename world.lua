@@ -5,7 +5,7 @@ function world:create()
     setmetatable(object, {__index = self} )
 
     object.map = map:create()
-    object.entities = { entity:create(0, 0) }
+    object.entities = { entity:create(0, 0, 16, 16) }
 
     return object
 end

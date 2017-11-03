@@ -1,7 +1,7 @@
 entity = {}
 
-function entity:create(x, y)
-    local object = { x = x, y = y }
+function entity:create(x, y, w, h)
+    local object = { x = x, y = y, w = w, h = h }
     setmetatable(object, {__index = self} )
 
     object.control_component = control_component:create(object)
