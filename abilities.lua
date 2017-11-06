@@ -11,7 +11,7 @@ abilities = {
         end,
 
         send_shader_data = function(shader)
-            shader:send("center", {256, 256})
+            shader:send("center", {0.5, 0.5})
         end,
     }
 }

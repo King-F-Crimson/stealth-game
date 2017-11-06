@@ -8,7 +8,7 @@ function world:create(game)
 
     object.tile_map = tile_map:create(object)
     object.entities = {}
-    object.canvas = love.graphics.newCanvas()
+    object.canvas = love.graphics.newCanvas(256, 256)
 
     object:add_entity(entity:create(object.game, 32, 32, 16, 16))
 
