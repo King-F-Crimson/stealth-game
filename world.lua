@@ -1,7 +1,7 @@
 world = {}
 
-function world:create()
-    local object = {}
+function world:create(game)
+    local object = { game = game }
     setmetatable(object, {__index = self} )
 
     object.bump_world = bump.newWorld(32)
@@ -10,9 +10,15 @@ function world:create()
     object.entities = {}
     object.canvas = love.graphics.newCanvas()
 
-    object:add_entity(entity:create(object, 32, 32, 16, 16))
+    object:add_entity(entity:create(object.game, 32, 32, 16, 16))
 
     return object
+end
+
+function world:destroy()
+    for k, entity in pairs(self.entities) do
+        entity:destroy()
+    end
 end
 
 function world:update()
