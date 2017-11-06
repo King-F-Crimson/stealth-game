@@ -25,12 +25,15 @@ end
 
 function game:update()
     self.world:update()
+    self.camera:update()
 end
 
 function game:draw()
     love.graphics.push()
         self.camera:apply_transformation()
+        self.camera:apply_shader()
         self.world:draw()
+        love.graphics.setShader()
     love.graphics.pop()
 end
 

@@ -8,5 +8,5 @@ function ability_component:create(game, entity)
 end
 
 function ability_component:activate()
-    abilities.za_warudo:activate(self.game.world, self.entity)
+    abilities.za_warudo:activate(self.game, self.entity)
 end

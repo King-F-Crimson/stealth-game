@@ -9,6 +9,27 @@ function camera:create()
     return object
 end
 
+function camera:update()
+    if self.active_shader then
+        self.shader_time = self.shader_time + 1
+
+        if self.shader_time == self.shader_duration then
+            self.active_shader = nil
+        end
+    end
+end
+
+function camera:add_shader(shader, duration)
+    self.shader_duration = duration
+    self.shader_time = 0
+
+    self.active_shader = shader
+end
+
+function camera:apply_shader()
+    love.graphics.setShader(self.active_shader)
+end
+
 function camera:apply_transformation()
     local entity = self.centered_entity
     local screen = {
