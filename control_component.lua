@@ -16,10 +16,10 @@ function control_component:destory()
 end
 
 function control_component:handle_key_press(action)
-    local special_ability_component = self.entity.special_ability_component
+    local ability_component = self.entity.ability_component
 
-    if action == "activate_special" and special_ability_component then
-        special_ability_component:activate()
+    if action == "activate_ability" and ability_component then
+        ability_component:activate()
     end
 end
 

@@ -9,8 +9,8 @@ require("graphics_component")
 require("control_component")
 require("control")
 require("camera")
-require("special_ability")
-require("special_ability_component")
+require("abilities")
+require("ability_component")
 
 bump = require("libs/bump/bump")
 

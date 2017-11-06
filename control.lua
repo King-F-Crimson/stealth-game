@@ -12,7 +12,7 @@ function control:create(game)
     }
 
     object.key_map = {
-        z = "activate_special",
+        z = "activate_ability",
     }
 
     return object

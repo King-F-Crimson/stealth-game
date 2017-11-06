@@ -7,7 +7,7 @@ function entity:create(game, x, y, w, h)
     object.control_component = control_component:create(game, object)
     object.graphics_component = graphics_component:create(object)
 
-    object.special_ability_component = special_ability_component:create()
+    object.ability_component = ability_component:create(game, object)
 
     return object
 end
