@@ -30,7 +30,7 @@ end
 
 function camera:apply_shader()
     if self.active_shader then
-        self.active_shader:send("t", self.shader_time)
+        self.active_shader:send("t", self.shader_time / self.shader_duration)
         self.send_shader_data(self.active_shader)
 
         love.graphics.setShader(self.active_shader)
