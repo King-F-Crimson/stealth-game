@@ -4,15 +4,19 @@ function world:create()
     local object = {}
     setmetatable(object, {__index = self} )
 
-    object.map = map:create()
-    object.entities = { entity:create(32, 32, 16, 16) }
+    object.bump_world = bump.newWorld(32)
+
+    object.tile_map = tile_map:create(object)
+    object.entities = {}
     object.canvas = love.graphics.newCanvas()
+
+    object:add_entity(entity:create(object, 32, 32, 16, 16))
 
     return object
 end
 
 function world:update()
-    self.map:update()
+    self.tile_map:update()
 
     for i, entity in pairs(self.entities) do
         entity:update()
@@ -25,7 +29,7 @@ function world:update_canvas()
     love.graphics.setCanvas(self.canvas)
         love.graphics.clear()
 
-        self.map:draw()
+        self.tile_map:draw()
         for i, entity in pairs(self.entities) do
             entity:draw()
         end
@@ -35,4 +39,14 @@ end
 
 function world:draw()
     love.graphics.draw(self.canvas)
+end
+
+function world:add_entity(entity)
+    table.insert(self.entities, entity)
+
+    self.bump_world:add(entity, entity.x, entity.y, entity.w, entity.h)
+end
+
+function world:move_entity(entity, goal_x, goal_y)
+    entity.x, entity.y = self.bump_world:move(entity, goal_x, goal_y)
 end

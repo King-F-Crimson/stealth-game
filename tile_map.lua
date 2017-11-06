@@ -1,7 +1,7 @@
-map = {}
+tile_map = {}
 
-function map:create()
-    local object = {}
+function tile_map:create(world)
+    local object = { world = world, bump_world = world.bump_world }
     setmetatable(object, {__index = self} )
 
     object.tiles = {
@@ -36,14 +36,16 @@ function map:create()
 
     object.canvas = love.graphics.newCanvas(object.w, object.h)
 
+    object:initialize_bump_world()
+
     return object
 end
 
-function map:update()
+function tile_map:update()
     self:update_canvas()
 end
 
-function map:update_canvas()
+function tile_map:update_canvas()
     love.graphics.setCanvas(self.canvas)
         love.graphics.push()
             for y, row in pairs(self.tiles) do
@@ -57,11 +59,24 @@ function map:update_canvas()
     love.graphics.setCanvas()
 end
 
-function map:get_origin()
+function tile_map:initialize_bump_world()
+    for y, row in pairs(self.tiles) do
+        y = y - 1
+        for x, tile in pairs(row) do
+            x = x - 1
+
+            if tile == 1 then
+                self.bump_world:add({}, self.tile_size * x, self.tile_size * y, self.tile_size, self.tile_size)
+            end
+        end
+    end
+end
+
+function tile_map:get_origin()
     return {self.w / 2, self.h / 2}
 end
 
-function map:draw()
+function tile_map:draw()
     love.graphics.push()
         love.graphics.draw(self.canvas)
     love.graphics.pop()

@@ -3,12 +3,13 @@ require("title_screen")
 require("observer")
 require("queue")
 require("world")
-require("map")
+require("tile_map")
 require("entity")
 require("graphics_component")
 require("control_component")
 require("control")
 require("camera")
+bump = require("libs/bump/bump")
 
 application = {
     font = love.graphics.newImageFont("assets/font.png",

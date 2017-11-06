@@ -1,7 +1,7 @@
 control_component = {}
 
-function control_component:create(entity)
-    local object = { entity = entity }
+function control_component:create(world, entity)
+    local object = { world = world, entity = entity }
     setmetatable(object, {__index = self} )
 
     return object
@@ -10,16 +10,21 @@ end
 function control_component:update()
     local entity = self.entity
 
+    local goal_x = entity.x
+    local goal_y = entity.y
+
     if control.is_active("move_up") then
-        entity.y = entity.y - 4
+        goal_y = goal_y - 4
     end
     if control.is_active("move_down") then
-        entity.y = entity.y + 4
+        goal_y = goal_y + 4
     end
     if control.is_active("move_left") then
-        entity.x = entity.x - 4
+        goal_x = goal_x - 4
     end
     if control.is_active("move_right") then
-        entity.x = entity.x + 4
+        goal_x = goal_x + 4
     end
+
+    self.world:move_entity(self.entity, goal_x, goal_y)
 end
