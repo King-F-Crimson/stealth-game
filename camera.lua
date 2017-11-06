@@ -19,15 +19,22 @@ function camera:update()
     end
 end
 
-function camera:add_shader(shader, duration)
+function camera:add_shader(shader, duration, send_shader_data)
     self.shader_duration = duration
     self.shader_time = 0
+
+    self.send_shader_data = send_shader_data
 
     self.active_shader = shader
 end
 
 function camera:apply_shader()
-    love.graphics.setShader(self.active_shader)
+    if self.active_shader then
+        self.active_shader:send("t", self.shader_time)
+        self.send_shader_data(self.active_shader)
+
+        love.graphics.setShader(self.active_shader)
+    end
 end
 
 function camera:apply_transformation()
