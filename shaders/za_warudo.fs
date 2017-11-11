@@ -21,13 +21,13 @@ vec2 to_cartesian(vec2 origin, vec2 point)
 vec4 ripple(Image texture, vec2 texture_coords)
 {
     number d = distance(center, texture_coords);
-    number factor = abs((t * 2 - d));
+    number factor = abs((t * 4 - d));
 
     vec2 new_coords = to_polar(center, texture_coords);
     new_coords[0] *= 1 + factor / 1.5;
     new_coords = to_cartesian(center, new_coords);
 
-    return Texel(texture, new_coords) + factor * 4;
+    return Texel(texture, new_coords); // Add white pulse
 }
 
 vec4 invert_color(vec4 pixel)
@@ -41,11 +41,11 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
 
     number d = distance(center, texture_coords);
 
-    if (d < t * 2.2 && d > t * 1.8) {
+    if (d < t * 2.8 && d > t * 1.8) {
         pixel = ripple(texture, texture_coords);
     }
 
-    if (d < t * 2.2) {
+    if (d < t * 2.8) {
         pixel = invert_color(pixel);
     }
 

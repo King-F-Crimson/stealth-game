@@ -12,6 +12,7 @@ require("camera")
 require("abilities")
 require("ability_component")
 require("utility")
+require("entities")
 
 bump = require("libs/bump/bump")
 

@@ -4,9 +4,11 @@ function control_component:create(game, entity)
     local object = { game = game, entity = entity }
     setmetatable(object, {__index = self} )
 
-    object.listeners = {
-        object.game.observer:add_listener("key_pressed", function(data) object:handle_key_press(data.action) end )
-    }
+    if game then
+        object.listeners = {
+            object.game.observer:add_listener("key_pressed", function(data) object:handle_key_press(data.action) end )
+        }
+    end
 
     return object
 end

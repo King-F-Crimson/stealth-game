@@ -1,13 +1,20 @@
 entity = {}
 
-function entity:create(game, x, y, w, h)
-    local object = { game = game, x = x, y = y, w = w, h = h }
+function entity:create(game, base_entity, x, y)
+    local object = {
+        x = x,
+        y = y,
+        w = base_entity.w,
+        h = base_entity.h,
+        ox = base_entity.ox,
+        oy = base_entity.oy,
+    }
+    
     setmetatable(object, {__index = self} )
 
-    object.control_component = control_component:create(game, object)
-    object.graphics_component = graphics_component:create(object)
-
-    object.ability_component = ability_component:create(game, object)
+    object.control_component  = base_entity.control_component:create(game, object)
+    object.graphics_component = base_entity.graphics_component:create(game, object)
+    object.ability_component  = base_entity.ability_component:create(game, object)
 
     return object
 end

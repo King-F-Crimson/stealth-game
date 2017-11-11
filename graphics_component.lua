@@ -1,10 +1,8 @@
 graphics_component = {}
 
-function graphics_component:create(entity)
-    local object = { entity = entity }
+function graphics_component:create(game, entity, sprite)
+    local object = { game = game, entity = entity, sprite = sprite }
     setmetatable(object, {__index = self} )
-
-    object.sprite = love.graphics.newImage("assets/template_unit.png")
 
     return object
 end
@@ -12,5 +10,5 @@ end
 function graphics_component:draw()
     local entity = self.entity
 
-    love.graphics.draw(self.sprite, entity.x, entity.y)
+    love.graphics.draw(self.sprite, entity.x, entity.y, 0, 1, 1, entity.ox, entity.oy)
 end
