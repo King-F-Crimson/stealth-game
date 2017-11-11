@@ -8,7 +8,9 @@ function game:create(application, args)
     object.world = world:create(object)
     object.camera = camera:create()
 
-    object.camera:set_centered_entity(object.world.entities[1])
+    local player = object.world:find_entity_with_class("player")[1]
+
+    object.camera:set_centered_entity(player)
 
     object.listeners = {
 

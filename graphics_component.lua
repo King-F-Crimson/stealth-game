@@ -7,6 +7,13 @@ function graphics_component:create(game, entity, sprite)
     return object
 end
 
+function graphics_component:subclass(sprite)
+    local object = { sprite = sprite }
+    setmetatable(object, {__index = self} )
+
+    return object
+end
+
 function graphics_component:draw()
     local entity = self.entity
 

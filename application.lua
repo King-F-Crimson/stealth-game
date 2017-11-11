@@ -11,8 +11,11 @@ require("control")
 require("camera")
 require("abilities")
 require("ability_component")
+require("player_control_component")
+require("ai_guard_control_component")
 require("utility")
 require("entities")
+
 
 bump = require("libs/bump/bump")
 

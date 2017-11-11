@@ -4,6 +4,7 @@ function entity:create(game, base_entity, x, y)
     local object = {
         x = x,
         y = y,
+        class = base_entity.class,
         w = base_entity.w,
         h = base_entity.h,
         ox = base_entity.ox,
