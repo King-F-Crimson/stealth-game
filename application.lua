@@ -14,8 +14,10 @@ require("ability_component")
 require("player_control_component")
 require("ai_guard_control_component")
 require("utility")
-require("entities")
+require("line_of_sight")
+require("guard_graphics_component")
 
+require("entities")
 
 bump = require("libs/bump/bump")
 

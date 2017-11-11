@@ -9,6 +9,8 @@ function agcc:create(game, entity)
     object.state = "patrol_right"
     object.walk_timer = 120
 
+    object.line_of_sight = line_of_sight:create(game, entity, math.pi * 0.5, 5)
+
     return object
 end
 

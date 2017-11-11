@@ -22,7 +22,7 @@ entities = {
         ox = 4,
         oy = 2,
         
-        graphics_component = graphics_component:subclass(love.graphics.newImage("assets/template_unit.png")),
+        graphics_component = guard_graphics_component,
         control_component  = ai_guard_control_component,
         ability_component  = ability_component:subclass(),
     },
