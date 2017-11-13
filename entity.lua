@@ -24,6 +24,10 @@ function entity:destroy()
     self.control_component:destroy()
 end
 
+function entity:get_center()
+    return { x = self.x + self.w / 2, y = self.y + self.h / 2}
+end
+
 function entity:update()
     self.control_component:update()
 end

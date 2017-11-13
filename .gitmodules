@@ -7,3 +7,6 @@
 [submodule "libs/HC"]
 	path = libs/HC
 	url = https://github.com/vrld/HC.git
+[submodule "libs/HUMP"]
+	path = libs/HUMP
+	url = https://github.com/vrld/hump.git

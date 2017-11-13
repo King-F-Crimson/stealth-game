@@ -1,3 +1,6 @@
+bump = require("libs/bump/bump")
+vector = require("libs/HUMP/vector-light")
+
 require("game")
 require("title_screen")
 require("observer")
@@ -16,10 +19,9 @@ require("ai_guard_control_component")
 require("utility")
 require("line_of_sight")
 require("guard_graphics_component")
+require("line")
 
 require("entities")
-
-bump = require("libs/bump/bump")
 
 application = {
     font = love.graphics.newImageFont("assets/font.png",
