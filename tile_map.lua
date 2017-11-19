@@ -111,6 +111,8 @@ end
 
 function tile_map:get_walls(horizontal, vertical)
     -- Arguments are booleans for getting each type of wall.
+    local horizontal = horizontal or true
+    local vertical = vertical or true
 
     local walls = {}
 
@@ -174,8 +176,9 @@ function tile_map:get_walls(horizontal, vertical)
                 else
                     if previous_spot_is_wall then
                         table.insert(walls, {
-                            { x = current_wall_start, y = line_number * tile_size },
-                            { x = x * tile_size, y = line_number * tile_size },
+                            start = { x = current_wall_start, y = line_number * tile_size },
+                            stop  = { x = x * tile_size, y = line_number * tile_size },
+                            direction = { x = x * tile_size - current_wall_start, y = 0 }, -- stop - start
                         })
                     end
 
@@ -225,8 +228,9 @@ function tile_map:get_walls(horizontal, vertical)
                 else
                     if previous_spot_is_wall then
                         table.insert(walls, {
-                            { x = line_number * tile_size, y = current_wall_start },
-                            { x = line_number * tile_size, y = y * tile_size },
+                            start = { x = line_number * tile_size, y = current_wall_start },
+                            stop  = { x = line_number * tile_size, y = y * tile_size },
+                            direction = { x = 0, y = y * tile_size - current_wall_start },
                         })
                     end
 
@@ -239,172 +243,47 @@ function tile_map:get_walls(horizontal, vertical)
     return walls
 end
 
-function tile_map:get_collision_point(start, angle)
-    local end_x, end_y
+-- Walls are provided as argument to not recalculate walls.
+function tile_map:get_collision_point(start, angle, walls)
+    local d_x, d_y = vector.fromPolar(angle, 1)
+    local ray = { 
+        start = { x = start.x, y = start.y },
+        direction = { x = d_x, y = d_y },
+    }
 
-    local points = self:get_line_collisions_with_grid(start, angle)
+    local closest_wall = { x = 1000, y = 1000, distance = 100000 }
 
-    local function compare(a, b) return a.d < b.d end
+    for k, wall in pairs(walls) do
+        local i_x, i_y, distance = lines.find_intersection(ray, wall)
 
-    table.sort(points, compare)
-
-    for k, point in pairs(points) do
-        print(point.x, point.y, point.d)
-        if self:is_coordinates_wall(point.x, point.y) then
-            end_x, end_y = point.x, point.y
-            break
-        end
-    end
-
-    print("BUZZ")
-
-    return end_x, end_y
-end
-
-function tile_map:get_line_collisions_with_grid(start, angle)
-    local tile_size = self.tile_size
-    local w = self.w
-    local h = self.h
-
-    local points = {}
-
-    local m = math.tan(angle)
-
-    local x_direction
-    local y_direction
-
-    if math.abs(angle) < math.pi / 2 then
-        x_direction = "forward"
-    elseif math.abs(angle) > math.pi / 2 then
-        x_direction = "backward"
-    else
-        -- Static aka m is infinite so moving only up.
-        x_direction = "static"
-    end
-
-    -- Lua uses left to right and up to down coordinates
-    if angle > 0 then
-        y_direction = "down"
-    elseif angle < 0 then
-        y_direction = "up"
-    else
-        y_direction = "static"
-    end
-
-    -- Get all point where x intersects with the vertical grid.
-    if x_direction ~= "static" then
-        local x = start.x
-        local y = start.y
-
-        if x_direction == "forward" then
-            x = x - (x % tile_size) + tile_size
-        else
-            x = x - (x % tile_size)
-        end
-
-        y = (x - start.x) * m
-
-        while x < w and x > 0 and y < h and y > 0 do
-            local d = math.abs(start.x - x)
-            table.insert(points, {x = x, y = y, d = d})
-
-            print("COORD", x, y)
-
-            x = x + tile_size
-            y = y + tile_size * m
-        end
-    end
-
-    -- Same for y.
-    if y_direction ~= "static" then
-        local x = start.x
-        local y = start.y
-
-        if y_direction == "down" then
-            y = y - (y % tile_size) + tile_size
-        else
-            y = y - (y % tile_size)
-        end
-
-        x = (y - start.y) / m
-
-        while x < w and x > 0 and y < h and y > 0 do
-            local d = math.abs(start.x - x)
-            table.insert(points, {x = x, y = y, d = d})
-
-            print("COORD", x, y)
-
-            y = y + tile_size
-            x = x + tile_size / m
-        end
-    end
-
-    return points
-end
-
-function tile_map:coordinates_to_tiles(x, y)
-    local tile_size = self.tile_size
-
-    local tiles = {}
-
-    -- There would be two x coords or y coords if it is between two tiles 
-    -- ex: at x = 48 with tile_size = 16, x_tile will be 3 and x_tile_2 will be 4
-
-    local x_tile, y_tile, x_tile_2, y_tile_2
-
-    x_tile = (x - (x % tile_size)) / tile_size + 1
-    y_tile = (y - (y % tile_size)) / tile_size + 1
-
-    if x % tile_size == 0 then
-        x_tile_2 = x_tile - 1
-    end
-    if y % tile_size == 0 then
-        y_tile_2 = y_tile - 1
-    end
-
-    table.insert(tiles, { x = x_tile, y = y_tile, content = self.tiles[y_tile][x_tile] })
-
-    if x_tile_2 then
-        table.insert(tiles, { x = x_tile_2, y = y_tile, content = self.tiles[y_tile][x_tile_2] })
-    end
-    if y_tile_2 then
-        table.insert(tiles, { x = x_tile, y = y_tile_2, content = self.tiles[y_tile_2][x_tile] })
-    end
-    if x_tile_2 and y_tile_2 then
-        table.insert(tiles, { x = x_tile_2, y = y_tile_2, content = self.tiles[y_tile_2][x_tile_2] })
-    end
-
-    return tiles
-end
-
-function tile_map:is_coordinates_wall(x, y)
-    local is_wall = false
-
-    local tiles = self:coordinates_to_tiles(x, y)
-
-    if #tiles ~= 4 then
-        for k, tile in pairs(tiles) do
-            if tile.content == 1 then
-                is_wall = true
+        -- If there's an intersection, compare it with the closest wall.
+        -- And if it's shorter than the current closest wall, replace it.
+        if distance then
+            if closest_wall then
+                if distance < closest_wall.distance then 
+                    closest_wall = { x = i_x, y = i_y, distance = distance }
+                end
+            else
+                closest_wall = { x = i_x, y = i_y, distance = distance }
             end
         end
+   end
+
+    return closest_wall.x, closest_wall.y
+end
+
+
+function tile_map:get_wall_ending_angles(center)
+    local angles = {}
+    
+    -- Get only horizontal walls since they share edges with vertical walls.
+
+    local walls = self:get_walls(true, false)
+
+    for k, wall in pairs(walls) do
+        table.insert(angles, (vector.toPolar(wall.start.x - center.x, wall.start.y - center.y)))
+        table.insert(angles, (vector.toPolar(wall.stop.x - center.x, wall.stop.y - center.y)))
     end
 
-    -- Special case if the point is between four tiles, it only counts as wall if there are TWO tiles.
-    -- This allows slicing ray.
-    if #tiles == 4 then
-        local wall_count = 0
-
-        for k, tile in pairs(tiles) do
-            if tile.content == 1 then
-                wall_count = wall_count + 1
-            end
-        end
-
-        if wall_count >= 2 then
-            is_wall = true
-        end
-    end
-
-    return is_wall
+    return angles
 end

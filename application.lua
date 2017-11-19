@@ -19,7 +19,7 @@ require("ai_guard_control_component")
 require("utility")
 require("line_of_sight")
 require("guard_graphics_component")
-require("line")
+require("lines")
 
 require("entities")
 
