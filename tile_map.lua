@@ -251,7 +251,7 @@ function tile_map:get_collision_point(start, angle, walls)
         direction = { x = d_x, y = d_y },
     }
 
-    local closest_wall = { x = 1000, y = 1000, distance = 100000 }
+    local closest_wall
 
     for k, wall in pairs(walls) do
         local i_x, i_y, distance = lines.find_intersection(ray, wall)

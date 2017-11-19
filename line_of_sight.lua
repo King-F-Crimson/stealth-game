@@ -13,7 +13,7 @@ function line_of_sight:create(game, entity, field_of_view, distance)
     return object
 end
 
-function line_of_sight:create_triangles()
+function line_of_sight:draw_visibility_polygons()
     local tile_map = self.game.world.tile_map
     local walls = tile_map:get_walls()
     local center = self.entity:get_center()
@@ -28,10 +28,6 @@ function line_of_sight:create_triangles()
         table.insert(end_points, self:cast_ray(center, angle - 0.000001, walls))
         table.insert(end_points, self:cast_ray(center, angle, walls))
         table.insert(end_points, self:cast_ray(center, angle + 0.000001, walls))
-    end
-
-    for k, wall in pairs(walls) do
-        love.graphics.line(wall.start.x, wall.start.y, wall.start.x + wall.direction.x, wall.start.y + wall.direction.y)
     end
 
     for k, point in pairs(end_points) do
@@ -55,6 +51,24 @@ function line_of_sight:cast_ray(start, angle, walls)
     return { x = end_x, y = end_y }
 end
 
+function line_of_sight:draw_mask()
+    local center = self.entity:get_center()
+    local direction = self.entity.direction
+
+    -- Circle to limit distance.
+    love.graphics.arc("fill", center.x, center.y, self.distance, direction + self.fov / 2, direction - self.fov / 2)
+end
+
 function line_of_sight:draw()
-    self:create_triangles()
+    -- Limit area rendering to area within fov and distance.
+    local function mask_view_area()
+        self:draw_mask()
+    end
+
+    love.graphics.stencil(mask_view_area, "replace")
+    love.graphics.setStencilTest("equal", 1)
+
+    self:draw_visibility_polygons()
+
+    love.graphics.setStencilTest()
 end

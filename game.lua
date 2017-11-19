@@ -4,6 +4,8 @@ function game:create(application, args)
     local object = { application = application, observer = application.observer }
     setmetatable(object, {__index = self})
 
+    object.tile_size = 16
+
     object.control = control:create(object)
     object.world = world:create(object)
     object.camera = camera:create()

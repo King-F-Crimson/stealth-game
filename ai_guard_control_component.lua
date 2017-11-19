@@ -9,7 +9,7 @@ function agcc:create(game, entity)
     object.state = "patrol_right"
     object.walk_timer = 120
 
-    object.line_of_sight = line_of_sight:create(game, entity, math.pi * 0.5, 5)
+    object.line_of_sight = line_of_sight:create(game, entity, math.pi * 0.5, game.tile_size * 10)
 
     return object
 end
@@ -18,9 +18,11 @@ function agcc:update()
     local entity = self.entity
 
     local goal_x, goal_y
+    local direction
 
     if self.state == "patrol_right" then
         goal_x, goal_y = entity.x + 1, entity.y + 1
+        direction = 0
 
         if self.walk_timer == 0 then
             self.state = "patrol_left"
@@ -29,6 +31,7 @@ function agcc:update()
 
     elseif self.state == "patrol_left" then
         goal_x, goal_y = entity.x - 1, entity.y - 1
+        direction = math.pi
 
         if self.walk_timer == 0 then
             self.state = "patrol_right"
@@ -42,4 +45,5 @@ function agcc:update()
     self.walk_timer = self.walk_timer - 1
 
     self.game.world:move_entity(entity, goal_x, goal_y)
+    entity.direction = direction
 end

@@ -9,6 +9,7 @@ function entity:create(game, base_entity, x, y)
         h = base_entity.h,
         ox = base_entity.ox,
         oy = base_entity.oy,
+        direction = 0,
     }
     
     setmetatable(object, {__index = self} )
