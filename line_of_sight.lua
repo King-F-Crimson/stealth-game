@@ -6,6 +6,7 @@ function line_of_sight:create(game, entity, field_of_view, distance)
         entity = entity,
         fov = field_of_view,
         distance = distance,
+        color = {255, 255, 80, 63},
     }
     setmetatable(object, {__index = self} )
 
@@ -42,8 +43,9 @@ function line_of_sight:create_triangles()
             previous_point = end_points[k - 1]
         end
 
-        --love.graphics.line(center.x, center.y, point.x, point.y)
+        love.graphics.setColor(self.color)
         love.graphics.polygon("fill", center.x, center.y, point.x, point.y, previous_point.x, previous_point.y)
+        love.graphics.setColor(255, 255, 255, 255)
     end
 end
 

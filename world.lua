@@ -9,6 +9,7 @@ function world:create(game)
     object.tile_map = tile_map:create(object)
     object.entities = {}
     object.canvas = love.graphics.newCanvas(object.tile_map.w, object.tile_map.h)
+    object.visibility = love.graphics.newCanvas(object.tile_map.w, object.tile_map.h)
 
     object:add_entity(entity:create(object.game, entities.player, 32, 32))
     object:add_entity(entity:create(object.game, entities.guard, 64, 64))
@@ -49,11 +50,20 @@ function world:update_canvas()
         love.graphics.clear()
 
         self.tile_map:draw()
+        self:draw_visibility()
         for i, entity in pairs(self.entities) do
             entity:draw()
         end
 
     love.graphics.setCanvas()
+end
+
+function world:draw_visibility()
+    for i, entity in pairs(self.entities) do
+        if entity.control_component.line_of_sight then
+            entity.control_component.line_of_sight:draw()
+        end
+    end
 end
 
 function world:draw()
