@@ -16,7 +16,8 @@ function lines.find_intersection(ray, line)
 
         -- Does not count as an intersection if the intersection is outside the line (not 0 < line_distance < 1)
         -- or if the intersection is on the opposite direction of the ray (not 0 < ray_distance)
-        if line_distance >= 0 and line_distance <= 1 and ray_distance >= 0 then
+        -- tostring comparison is for when somehow the equation '1' does not equal to '1', probably caused by floating point error.
+        if line_distance >= 0 and (line_distance <= 1 or tostring(line_distance) == "1") and ray_distance >= 0 then
             local i_x, i_y = ray.start.x + ray.direction.x * ray_distance, ray.start.y + ray.direction.y * ray_distance
 
             return i_x, i_y, ray_distance

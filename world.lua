@@ -13,6 +13,7 @@ function world:create(game)
 
     object:add_entity(entity:create(object.game, entities.player, 32, 32))
     object:add_entity(entity:create(object.game, entities.guard, 64, 64))
+    object:add_entity(entity:create(object.game, entities.treasure, 416, 128))
 
     return object
 end
@@ -33,7 +34,7 @@ function world:update()
     self:update_canvas()
 end
 
-function world:find_entity_with_class(class)
+function world:find_entities_with_class(class)
     local entities_with_class = {}
 
     for k, entity in pairs(self.entities) do

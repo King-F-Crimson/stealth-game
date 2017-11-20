@@ -13,6 +13,7 @@ function control:create(game)
 
     object.key_map = {
         z = "activate_ability",
+        x = "interact_with_item"
     }
 
     return object

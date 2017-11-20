@@ -8,7 +8,7 @@ entities = {
         ox = 4,
         oy = 2,
         
-        graphics_component = graphics_component:subclass(love.graphics.newImage("assets/template_unit.png")),
+        graphics_component = player_graphics_component,
         control_component  = player_control_component,
         ability_component  = ability_component:subclass(),
     },
@@ -26,4 +26,18 @@ entities = {
         control_component  = ai_guard_control_component,
         ability_component  = ability_component:subclass(),
     },
+
+    treasure = {
+        class = "treasure",
+
+        w = 14,
+        h = 12,
+
+        ox = 1,
+        oy = 3,
+
+        graphics_component = graphics_component:subclass(love.graphics.newImage("assets/chest.png")),
+        control_component  = control_component:subclass(),
+        ability_component  = ability_component:subclass(),
+    }
 }

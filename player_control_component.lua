@@ -8,6 +8,9 @@ function player_control_component:create(game, entity)
         object.game.observer:add_listener("key_pressed", function(data) object:handle_key_press(data.action) end )
     }
 
+    object.interactable_item = nil
+    object.interact_distance = 24
+
     return object
 end
 
@@ -20,6 +23,44 @@ function player_control_component:handle_key_press(action)
 
     if action == "activate_ability" and ability_component then
         ability_component:activate()
+    end
+    if action == "interact_with_item" then
+        if self.interactable_item then
+            self:interact_with_item(self.interactable_item)
+        end
+    end
+end
+
+function player_control_component:interact_with_item(item)
+    if item.class == "treasure" then
+        print("Chest found!")
+    end
+end
+
+function player_control_component:get_nearest_interactable_item()
+    local nearest_item
+    local distance_to_nearest_item
+    local center = self.entity:get_center()
+
+    for k, item in pairs(self.game.world:find_entities_with_class("treasure")) do
+        if nearest_item then
+            local item_center = item:get_center()
+            local distance_to_item = vector.dist(center.x, center.y, item_center.x, item_center.y)
+
+            if distance_to_item < distance_to_nearest_item then
+                nearest_item = item
+                local nearest_item_center = nearest_item:get_center()
+                distance_to_nearest_item = vector.dist(center.x, center.y, nearest_item_center.x, nearest_item_center.y)
+            end
+        else
+            nearest_item = item
+            local nearest_item_center = nearest_item:get_center()
+            distance_to_nearest_item = vector.dist(center.x, center.y, nearest_item_center.x, nearest_item_center.y)
+        end
+    end
+
+    if distance_to_nearest_item < self.interact_distance then
+        return nearest_item
     end
 end
 
@@ -44,4 +85,6 @@ function player_control_component:update()
     end
 
     self.game.world:move_entity(entity, goal_x, goal_y)
+
+    self.interactable_item = self:get_nearest_interactable_item()
 end
