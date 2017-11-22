@@ -15,35 +15,37 @@ function agcc:create(game, entity)
 end
 
 function agcc:update()
-    local entity = self.entity
+    if not self.game.world.time_is_stopped then
+        local entity = self.entity
 
-    local goal_x, goal_y
-    local direction
+        local goal_x, goal_y
+        local direction
 
-    if self.state == "patrol_right" then
-        goal_x, goal_y = entity.x + 1, entity.y + 1
-        direction = 0
+        if self.state == "patrol_right" then
+            goal_x, goal_y = entity.x + 1, entity.y + 1
+            direction = 0
 
-        if self.walk_timer == 0 then
-            self.state = "patrol_left"
-            self.walk_timer = 120
+            if self.walk_timer == 0 then
+                self.state = "patrol_left"
+                self.walk_timer = 120
+            end
+
+        elseif self.state == "patrol_left" then
+            goal_x, goal_y = entity.x - 1, entity.y - 1
+            direction = math.pi
+
+            if self.walk_timer == 0 then
+                self.state = "patrol_right"
+                self.walk_timer = 120
+            end
+
+        else
+            goal_x, goal_y = entity.x, entity.y
         end
 
-    elseif self.state == "patrol_left" then
-        goal_x, goal_y = entity.x - 1, entity.y - 1
-        direction = math.pi
+        self.walk_timer = self.walk_timer - 1
 
-        if self.walk_timer == 0 then
-            self.state = "patrol_right"
-            self.walk_timer = 120
-        end
-
-    else
-        goal_x, goal_y = entity.x, entity.y
+        self.game.world:move_entity(entity, goal_x, goal_y)
+        entity.direction = direction
     end
-
-    self.walk_timer = self.walk_timer - 1
-
-    self.game.world:move_entity(entity, goal_x, goal_y)
-    entity.direction = direction
 end

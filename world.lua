@@ -32,6 +32,14 @@ function world:update()
     end
 
     self:update_canvas()
+
+    if self.time_is_stopped then
+        self.time_stop_duration = self.time_stop_duration - 1
+
+        if self.time_stop_duration == 0 then
+            self.time_is_stopped = false
+        end
+    end
 end
 
 function world:find_entities_with_class(class)

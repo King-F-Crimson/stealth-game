@@ -14,6 +14,9 @@ abilities = {
             game.camera:add_shader(self.shader, self.shader_duration, send_shader_data)
 
             self.sound_effect:play()
+
+            game.world.time_is_stopped = true
+            game.world.time_stop_duration = 5 * 60
         end,
     }
 }
