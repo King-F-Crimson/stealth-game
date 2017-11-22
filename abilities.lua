@@ -5,13 +5,15 @@ abilities = {
         shader_duration = 150,
 
         activate = function(self, game, caster)
-            game.camera:add_shader(self.shader, self.shader_duration, self.send_shader_data)
+            local function send_shader_data(shader)
+                local center = caster:get_center()
+
+                shader:send("center", {center.x / game.world.tile_map.w, center.y / game.world.tile_map.h})
+            end
+
+            game.camera:add_shader(self.shader, self.shader_duration, send_shader_data)
 
             self.sound_effect:play()
-        end,
-
-        send_shader_data = function(shader)
-            shader:send("center", {0.5, 0.5})
         end,
     }
 }
