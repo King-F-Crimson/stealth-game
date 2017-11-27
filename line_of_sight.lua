@@ -13,7 +13,13 @@ function line_of_sight:create(game, entity, field_of_view, distance)
     return object
 end
 
-function line_of_sight:draw_visibility_polygons()
+function line_of_sight:get_entities_in_sight()
+    local entities_in_sight = {}
+
+    return entities_in_sight
+end
+
+function line_of_sight:get_visibility_polygons()
     local tile_map = self.game.world.tile_map
     local walls = tile_map:get_walls()
     local center = self.entity:get_center()
@@ -30,6 +36,8 @@ function line_of_sight:draw_visibility_polygons()
         table.insert(end_points, self:cast_ray(center, angle + 0.000001, walls))
     end
 
+    local polygons = {}
+
     for k, point in pairs(end_points) do
         local previous_point
         -- Get the last end-point first as the first end-point pair. 
@@ -39,8 +47,18 @@ function line_of_sight:draw_visibility_polygons()
             previous_point = end_points[k - 1]
         end
 
+        table.insert(polygons, {center.x, center.y, point.x, point.y, previous_point.x, previous_point.y})
+    end
+
+    return polygons
+end
+
+function line_of_sight:draw_visibility_polygons()
+    local polygons = self:get_visibility_polygons()
+
+    for k, polygon in pairs(polygons) do
         love.graphics.setColor(self.color)
-        love.graphics.polygon("fill", center.x, center.y, point.x, point.y, previous_point.x, previous_point.y)
+        love.graphics.polygon("fill", polygon[1], polygon[2], polygon[3], polygon[4], polygon[5], polygon[6])
         love.graphics.setColor(255, 255, 255, 255)
     end
 end

@@ -14,6 +14,12 @@ function agcc:create(game, entity)
     return object
 end
 
+function agcc:is_player_detected()
+    for k, entity in pairs(self.line_of_sight:get_entities_in_sight()) do
+        print(entity)
+    end
+end
+
 function agcc:update()
     if not self.game.world.time_is_stopped then
         local entity = self.entity
@@ -47,5 +53,7 @@ function agcc:update()
 
         self.game.world:move_entity(entity, goal_x, goal_y)
         entity.direction = direction
+
+        self:is_player_detected()
     end
 end

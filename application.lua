@@ -1,5 +1,6 @@
 bump = require("libs/bump/bump")
 vector = require("libs/HUMP/vector-light")
+hc = require("libs/HC")
 
 require("game")
 require("title_screen")
