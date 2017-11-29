@@ -16,8 +16,12 @@ end
 
 function agcc:is_player_detected()
     for k, entity in pairs(self.line_of_sight:get_entities_in_sight()) do
-        print(entity.class)
+        if entity.class == "player" then
+            return true
+        end
     end
+
+    return false
 end
 
 function agcc:update()
@@ -54,6 +58,8 @@ function agcc:update()
         self.game.world:move_entity(entity, goal_x, goal_y)
         entity.direction = direction
 
-        self:is_player_detected()
+        self.player_in_sight = self:is_player_detected()
+    else
+        self.player_in_sight = false
     end
 end

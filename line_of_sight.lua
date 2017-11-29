@@ -27,8 +27,7 @@ function line_of_sight:get_entities_in_sight()
         })
     end
 
-    print(#triangles)
-
+    local x = os.clock()
     for k, entity in pairs(self.game.world.entities) do
         local entity_rect = {
             { x = entity.x, y = entity.y },
