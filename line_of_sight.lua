@@ -16,6 +16,41 @@ end
 function line_of_sight:get_entities_in_sight()
     local entities_in_sight = {}
 
+    local visibility_polygons = self:get_visibility_polygons()
+    local triangles = {}
+
+    for k, polygon in pairs(visibility_polygons) do
+        table.insert(triangles, {
+            { x = polygon[1], y = polygon[2] },
+            { x = polygon[3], y = polygon[4] },
+            { x = polygon[5], y = polygon[6] },
+        })
+    end
+
+    print(#triangles)
+
+    for k, entity in pairs(self.game.world.entities) do
+        local entity_rect = {
+            { x = entity.x, y = entity.y },
+            { x = entity.x + entity.w, y = entity.y },
+            { x = entity.x + entity.w, y = entity.y + entity.h },
+            { x = entity.x, y = entity.y + entity.h },
+        }
+
+        local collides = false
+
+        for k, triangle in pairs(triangles) do
+            if collision.triangle_and_aabb_rectangle(triangle, entity_rect) then
+                collides = true
+                break
+            end
+        end
+
+        if collides then
+            table.insert(entities_in_sight, entity)
+        end
+    end
+
     return entities_in_sight
 end
 
@@ -30,15 +65,17 @@ function line_of_sight:get_visibility_polygons()
 
     -- Cast a ray to every point where a wall starts or ends.
     for k, angle in pairs(angles) do
-        -- Cast another angles with a slight derivation to hit the wall behind corners.
+        -- Cast angles with a slight derivation to hit the wall behind corners.
         table.insert(end_points, self:cast_ray(center, angle - 0.000001, walls))
-        table.insert(end_points, self:cast_ray(center, angle, walls))
         table.insert(end_points, self:cast_ray(center, angle + 0.000001, walls))
     end
 
     local polygons = {}
 
-    for k, point in pairs(end_points) do
+    -- Only connects angles that are not the result from the slight deviation (ex: not connecting 1.000001 with 0.999999).
+    for k = 1, #end_points, 2 do
+        local point = end_points[k]
+
         local previous_point
         -- Get the last end-point first as the first end-point pair. 
         if k == 1 then

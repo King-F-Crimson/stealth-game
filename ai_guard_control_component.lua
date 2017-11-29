@@ -16,7 +16,7 @@ end
 
 function agcc:is_player_detected()
     for k, entity in pairs(self.line_of_sight:get_entities_in_sight()) do
-        print(entity)
+        print(entity.class)
     end
 end
 

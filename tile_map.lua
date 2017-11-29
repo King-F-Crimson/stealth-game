@@ -245,7 +245,7 @@ function tile_map:get_collision_point(start, angle, walls)
     local closest_wall
 
     for k, wall in pairs(walls) do
-        local i_x, i_y, distance = lines.find_intersection(ray, wall)
+        local i_x, i_y, distance = lines.ray_line_intersection(ray, wall)
 
         -- If there's an intersection, compare it with the closest wall.
         -- And if it's shorter than the current closest wall, replace it.
@@ -275,6 +275,8 @@ function tile_map:get_wall_ending_angles(center)
         table.insert(angles, (vector.toPolar(wall.start.x - center.x, wall.start.y - center.y)))
         table.insert(angles, (vector.toPolar(wall.stop.x - center.x, wall.stop.y - center.y)))
     end
+
+    table.sort(angles)
 
     return angles
 end
