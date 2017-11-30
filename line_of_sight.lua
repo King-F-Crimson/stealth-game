@@ -120,7 +120,7 @@ function line_of_sight:draw()
     end
 
     love.graphics.stencil(mask_view_area, "replace")
-    love.graphics.setStencilTest("equal", 1)
+    -- love.graphics.setStencilTest("equal", 1)
 
     self:draw_visibility_polygons()
 
