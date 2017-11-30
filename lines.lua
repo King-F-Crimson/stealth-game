@@ -39,7 +39,7 @@ function lines.lines_intersection(ray, line)
         local ray_distance = (line.start.x + line.direction.x * line_distance - ray.start.x) / ray.direction.x
 
         -- The only difference with the previous function is that the function returns nil if the ray distance is more than 1 (i.e no intersection between lines)
-        if line_distance >= 0 and (line_distance <= 1 or tostring(line_distance) == "1") and ray_distance >= 0 and (ray_distance <= 1 or tostring(line_distance) == "1") then
+        if line_distance >= 0 and (line_distance <= 1 or tostring(line_distance) == "1") and ray_distance >= 0 and (ray_distance <= 1 or tostring(ray_distance) == "1") then
             local i_x, i_y = ray.start.x + ray.direction.x * ray_distance, ray.start.y + ray.direction.y * ray_distance
 
             return i_x, i_y, ray_distance, line_distance

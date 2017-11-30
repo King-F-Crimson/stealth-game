@@ -39,7 +39,7 @@ function line_of_sight:get_entities_in_sight()
         local collides = false
 
         for k, triangle in pairs(triangles) do
-            if collision.triangle_and_aabb_rectangle(triangle, entity_rect) then
+            if collision.visibility_triangle_and_aabb_rectangle(triangle, entity_rect) then
                 collides = true
                 break
             end
@@ -98,6 +98,10 @@ function line_of_sight:draw_visibility_polygons()
         love.graphics.setColor(255, 255, 255, 255)
     end
 
+    -- self:draw_debug_ray(polygons)
+end
+
+function line_of_sight:draw_debug_ray(polygons)
     -- DEBUG
     local player = self.game.world:find_entities_with_class("player")[1]
 
@@ -119,16 +123,20 @@ function line_of_sight:draw_visibility_polygons()
             { x = polygon[5], y = polygon[6] },
         }
 
-        local triangle_lines = collision.lines_from_polygon(triangle)
+        local triangle_lines = collision.lines_from_visibility_triangle(triangle)
 
         for k, line in pairs(triangle_lines) do
             for k, p_line in pairs(player_lines) do
                 if lines.lines_intersection(line, p_line) then
                     love.graphics.line(line.start.x, line.start.y, line.start.x + line.direction.x, line.start.y + line.direction.y)
+                    love.graphics.line(p_line.start.x, p_line.start.y, p_line.start.x + p_line.direction.x, p_line.start.y + p_line.direction.y)
+
+                    print(lines.lines_intersection(line, p_line))
                 end
             end
         end
     end
+    -- DEBUG END
 end
 
 function line_of_sight:cast_ray(start, angle, walls)

@@ -6,7 +6,7 @@ collision = {}
 -- It makes a triangle with points on (5, 6), (8, 3), and (2, 5).
 -- Line ordering is from start to end, with the end connecting with the start.
 
-function collision.triangle_and_aabb_rectangle(triangle, rectangle)
+function collision.visibility_triangle_and_aabb_rectangle(triangle, rectangle)
     -- Point in geometry test.
     for k, point in pairs(rectangle) do
         if collision.is_point_in_triangle(triangle, point) then
@@ -14,7 +14,7 @@ function collision.triangle_and_aabb_rectangle(triangle, rectangle)
         end
     end
 
-    local triangle_lines = collision.lines_from_polygon(triangle)
+    local triangle_lines = collision.lines_from_visibility_triangle(triangle)
     local rectangle_lines = collision.lines_from_polygon(rectangle)
 
     -- Line collision test.
@@ -48,6 +48,22 @@ function collision.lines_from_polygon(polygon)
 
         table.insert(lines, line)
     end 
+
+    return lines
+end
+
+-- Make only two lines by culling the middle line. The middle line is the one that is parallel to the wall.
+function collision.lines_from_visibility_triangle(polygon)
+    local lines = {
+        {
+            start = { x = polygon[1].x, y = polygon[1].y },
+            direction = { x = polygon[2].x - polygon[1].x, y = polygon[2].y - polygon[1].y },
+        },
+        {
+            start = { x = polygon[1].x, y = polygon[1].y },
+            direction = { x = polygon[3].x - polygon[1].x, y = polygon[3].y - polygon[1].y },
+        }
+    }
 
     return lines
 end
