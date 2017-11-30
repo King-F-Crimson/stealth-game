@@ -97,6 +97,38 @@ function line_of_sight:draw_visibility_polygons()
         love.graphics.polygon("fill", polygon[1], polygon[2], polygon[3], polygon[4], polygon[5], polygon[6])
         love.graphics.setColor(255, 255, 255, 255)
     end
+
+    -- DEBUG
+    local player = self.game.world:find_entities_with_class("player")[1]
+
+    local player_rect = {
+        { x = player.x, y = player.y },
+        { x = player.x + player.w, y = player.y },
+        { x = player.x + player.w, y = player.y + player.h },
+        { x = player.x, y = player.y + player.h },
+    }
+
+    local player_lines = collision.lines_from_polygon(player_rect)
+
+    local triangles = {}
+
+    for k, polygon in pairs(polygons) do
+        local triangle = {
+            { x = polygon[1], y = polygon[2] },
+            { x = polygon[3], y = polygon[4] },
+            { x = polygon[5], y = polygon[6] },
+        }
+
+        local triangle_lines = collision.lines_from_polygon(triangle)
+
+        for k, line in pairs(triangle_lines) do
+            for k, p_line in pairs(player_lines) do
+                if lines.lines_intersection(line, p_line) then
+                    love.graphics.line(line.start.x, line.start.y, line.start.x + line.direction.x, line.start.y + line.direction.y)
+                end
+            end
+        end
+    end
 end
 
 function line_of_sight:cast_ray(start, angle, walls)
