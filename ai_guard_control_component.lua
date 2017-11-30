@@ -26,6 +26,8 @@ end
 
 function agcc:update()
     if not self.game.world.time_is_stopped then
+        self.player_in_sight = self:is_player_detected()
+
         local entity = self.entity
 
         local goal_x, goal_y
@@ -55,10 +57,10 @@ function agcc:update()
 
         self.walk_timer = self.walk_timer - 1
 
-        self.game.world:move_entity(entity, goal_x, goal_y)
-        entity.direction = direction
-
-        self.player_in_sight = self:is_player_detected()
+        if not self.player_in_sight then
+            self.game.world:move_entity(entity, goal_x, goal_y)
+            entity.direction = direction
+        end
     else
         self.player_in_sight = false
     end
