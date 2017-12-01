@@ -16,7 +16,7 @@ abilities = {
             self.sound_effect:play()
 
             game.world.time_is_stopped = true
-            game.world.time_stop_duration = 5 * 60
+            game.world.time_stop_duration = 2.8 * 60
         end,
     }
 }

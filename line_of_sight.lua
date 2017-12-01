@@ -13,6 +13,11 @@ function line_of_sight:create(game, entity, field_of_view, distance)
     return object
 end
 
+-- Potential bug if the entity does collide with the ray and with the arc, but at different point.
+-- Ex: a part of the entity is covered behind wall so it does not collides with the visibility polygon,
+-- however it is in part of the visibility arc, so it does collide with the arc.
+-- And since another part of the entity is not covered by the wall, it collides with the visiblity polygon.
+-- A solution is to cull all angles outside the arc and add two more angles at the point which the arc ends.
 function line_of_sight:get_entities_in_sight()
     local entities_in_sight = {}
 
@@ -27,7 +32,16 @@ function line_of_sight:get_entities_in_sight()
         })
     end
 
-    local x = os.clock()
+    local center = self.entity:get_center()
+
+    local visibility_arc = {
+        x = center.x,
+        y = center.y,
+        r = self.distance,
+        direction = self.entity.direction,
+        fov = self.fov,
+    }
+
     for k, entity in pairs(self.game.world.entities) do
         local entity_rect = {
             { x = entity.x, y = entity.y },
@@ -37,11 +51,16 @@ function line_of_sight:get_entities_in_sight()
         }
 
         local collides = false
+        -- Check collision with the visiblity arc first since it is the fastest.
+        local collides_with_arc = collision.arc_and_aabb_rectangle(visibility_arc, entity_rect)
 
-        for k, triangle in pairs(triangles) do
-            if collision.visibility_triangle_and_aabb_rectangle(triangle, entity_rect) then
-                collides = true
-                break
+        -- Only check with visibility polygons if it is in the arc to save time.
+        if collides_with_arc then
+            for k, triangle in pairs(triangles) do
+                if collision.visibility_triangle_and_aabb_rectangle(triangle, entity_rect) then
+                    collides = true
+                    break
+                end
             end
         end
 
@@ -145,7 +164,7 @@ function line_of_sight:cast_ray(start, angle, walls)
     return { x = end_x, y = end_y }
 end
 
-function line_of_sight:draw_mask()
+function line_of_sight:draw_arc_mask()
     local center = self.entity:get_center()
     local direction = self.entity.direction
 
@@ -156,7 +175,7 @@ end
 function line_of_sight:draw()
     -- Limit area rendering to area within fov and distance.
     local function mask_view_area()
-        self:draw_mask()
+        self:draw_arc_mask()
     end
 
     love.graphics.stencil(mask_view_area, "replace")

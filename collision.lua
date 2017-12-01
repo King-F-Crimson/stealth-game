@@ -29,6 +29,16 @@ function collision.visibility_triangle_and_aabb_rectangle(triangle, rectangle)
     return false
 end
 
+function collision.arc_and_aabb_rectangle(arc, rectangle)
+    for k, point in pairs(rectangle) do
+        if collision.is_point_in_arc(arc, point) then
+            return true
+        end
+    end
+
+    local rectangle_lines = collision.lines_from_polygon(rectangle)
+end
+
 function collision.lines_from_polygon(polygon)
     local lines = {}
 
@@ -82,6 +92,42 @@ function collision.sign(p1, p2, p3)
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
 end
 
+function collision.is_point_in_arc(arc, point)
+    -- Check if point is in range.
+    local distance = vector.dist(point.x, point.y, arc.x, arc.y)
+    if distance > arc.r then
+        return false
+    end
+
+    -- Check if point is in angle.
+    local angle = math.atan(point.x - arc.x, point.y - arc.y)
+
+    local arc_angle_1 = arc.direction + arc.fov / 2
+    local arc_angle_2 = arc.direction - arc.fov / 2
+
+end
+
+-- Arc will always be half circle or smaller.
+function collision.is_angle_between_arc_angles(angle, arc_angle_1, arc_angle_2)
+    -- Starting angle clockwise.
+    local start_angle, end_angle
+
+    local angle_from_angle_1_to_angle_2_clockwise = (arc_angle_1 - arc_angle_2) % (math.pi * 2)
+
+    if angle_from_angle_1_to_angle_2_clockwise < math.pi then
+        start_angle, end_angle = arc_angle_1, arc_angle_2
+    else
+        start_angle, end_angle = arc_angle_2, arc_angle_1
+    end
+
+    -- Make angle ranges from 0 to 2 pi instead of negative values or more than 2 pi.
+    start_angle, end_angle = start_angle % (math.pi * 2), end_angle % (math.pi * 2)
+
+    return angle < start_angle and angle > end_angle
+end
+
+-- Currently not used since almost always the entity rectangle will be smaller than the triangle, even if it does not
+-- the edges are likely to intersect.
 function collision.is_point_in_aabb_rectangle(rectangle, point)
 
 end

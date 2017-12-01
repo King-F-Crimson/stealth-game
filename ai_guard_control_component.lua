@@ -31,11 +31,10 @@ function agcc:update()
         local entity = self.entity
 
         local goal_x, goal_y
-        local direction
+        local direction = (self.entity.direction + math.pi / 180) % (math.pi * 2)
 
         if self.state == "patrol_right" then
             goal_x, goal_y = entity.x + 1, entity.y + 1
-            direction = 0
 
             if self.walk_timer == 0 then
                 self.state = "patrol_left"
@@ -44,7 +43,6 @@ function agcc:update()
 
         elseif self.state == "patrol_left" then
             goal_x, goal_y = entity.x - 1, entity.y - 1
-            direction = math.pi
 
             if self.walk_timer == 0 then
                 self.state = "patrol_right"
