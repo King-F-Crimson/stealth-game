@@ -107,25 +107,6 @@ function collision.is_point_in_arc(arc, point)
 
 end
 
--- Arc will always be half circle or smaller.
-function collision.is_angle_between_arc_angles(angle, arc_angle_1, arc_angle_2)
-    -- Starting angle clockwise.
-    local start_angle, end_angle
-
-    local angle_from_angle_1_to_angle_2_clockwise = (arc_angle_1 - arc_angle_2) % (math.pi * 2)
-
-    if angle_from_angle_1_to_angle_2_clockwise < math.pi then
-        start_angle, end_angle = arc_angle_1, arc_angle_2
-    else
-        start_angle, end_angle = arc_angle_2, arc_angle_1
-    end
-
-    -- Make angle ranges from 0 to 2 pi instead of negative values or more than 2 pi.
-    start_angle, end_angle = start_angle % (math.pi * 2), end_angle % (math.pi * 2)
-
-    return angle < start_angle and angle > end_angle
-end
-
 -- Currently not used since almost always the entity rectangle will be smaller than the triangle, even if it does not
 -- the edges are likely to intersect.
 function collision.is_point_in_aabb_rectangle(rectangle, point)

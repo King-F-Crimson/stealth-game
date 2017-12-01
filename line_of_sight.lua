@@ -76,13 +76,28 @@ function line_of_sight:get_visibility_polygons()
     local tile_map = self.game.world.tile_map
     local walls = tile_map:get_walls()
     local center = self.entity:get_center()
-    local angles = tile_map:get_wall_ending_angles(center)
-    table.sort(angles)
+    local ray_angles = tile_map:get_wall_ending_angles(center)
+    local direction = self.entity.direction
+
+    local arc_start, arc_end = angles.determine_starting_angle_of_arc(angles.normalize(direction + self.fov / 2), angles.normalize(direction - self.fov / 2))
+
+    -- Cull angles outside FOV.
+    for k = #ray_angles, 1, -1 do
+        if not angles.is_angle_between_arc_angles(ray_angles[k], arc_start, arc_end) then
+            table.remove(ray_angles, k)
+        end
+    end
+
+    -- Add the arc_angles
+    table.insert(ray_angles, arc_start)
+    table.insert(ray_angles, arc_end)
+
+    angles.sort_counter_clockwise_from_starting_angle(arc_start, ray_angles)
 
     local end_points = {}
 
     -- Cast a ray to every point where a wall starts or ends.
-    for k, angle in pairs(angles) do
+    for k, angle in pairs(ray_angles) do
         -- Cast angles with a slight derivation to hit the wall behind corners.
         table.insert(end_points, self:cast_ray(center, angle - 0.000001, walls))
         table.insert(end_points, self:cast_ray(center, angle + 0.000001, walls))
@@ -102,7 +117,10 @@ function line_of_sight:get_visibility_polygons()
             previous_point = end_points[k - 1]
         end
 
-        table.insert(polygons, {center.x, center.y, point.x, point.y, previous_point.x, previous_point.y})
+        -- Only connect last point if the fov is a circle (math.pi * 2)
+        if k ~= 1 then
+            table.insert(polygons, {center.x, center.y, point.x, point.y, previous_point.x, previous_point.y})
+        end
     end
 
     return polygons
@@ -117,10 +135,10 @@ function line_of_sight:draw_visibility_polygons()
         love.graphics.setColor(255, 255, 255, 255)
     end
 
-    -- self:draw_debug_ray(polygons)
+    -- self:draw_debug_ray(polygons, true)
 end
 
-function line_of_sight:draw_debug_ray(polygons)
+function line_of_sight:draw_debug_ray(polygons, draw_all)
     -- DEBUG
     local player = self.game.world:find_entities_with_class("player")[1]
 
@@ -146,11 +164,11 @@ function line_of_sight:draw_debug_ray(polygons)
 
         for k, line in pairs(triangle_lines) do
             for k, p_line in pairs(player_lines) do
-                if lines.lines_intersection(line, p_line) then
+                if draw_all or lines.lines_intersection(line, p_line) then
                     love.graphics.line(line.start.x, line.start.y, line.start.x + line.direction.x, line.start.y + line.direction.y)
                     love.graphics.line(p_line.start.x, p_line.start.y, p_line.start.x + p_line.direction.x, p_line.start.y + p_line.direction.y)
 
-                    print(lines.lines_intersection(line, p_line))
+                    -- print(lines.lines_intersection(line, p_line))
                 end
             end
         end

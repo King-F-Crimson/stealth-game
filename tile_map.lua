@@ -276,7 +276,5 @@ function tile_map:get_wall_ending_angles(center)
         table.insert(angles, (vector.toPolar(wall.stop.x - center.x, wall.stop.y - center.y)))
     end
 
-    table.sort(angles)
-
     return angles
 end

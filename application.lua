@@ -22,6 +22,7 @@ require("utility")
 require("line_of_sight")
 require("guard_graphics_component")
 require("lines")
+require("angles")
 require("collision")
 
 require("entities")
