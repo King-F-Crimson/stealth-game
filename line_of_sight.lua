@@ -34,12 +34,10 @@ function line_of_sight:get_entities_in_sight()
 
     local center = self.entity:get_center()
 
-    local visibility_arc = {
+    local visibility_circle = {
         x = center.x,
         y = center.y,
         r = self.distance,
-        direction = self.entity.direction,
-        fov = self.fov,
     }
 
     for k, entity in pairs(self.game.world.entities) do
@@ -52,10 +50,10 @@ function line_of_sight:get_entities_in_sight()
 
         local collides = false
         -- Check collision with the visiblity arc first since it is the fastest.
-        local collides_with_arc = collision.arc_and_aabb_rectangle(visibility_arc, entity_rect)
+        local in_range = collision.circle_and_aabb_rectangle(visibility_circle, entity_rect)
 
         -- Only check with visibility polygons if it is in the arc to save time.
-        if collides_with_arc then
+        if in_range then
             for k, triangle in pairs(triangles) do
                 if collision.visibility_triangle_and_aabb_rectangle(triangle, entity_rect) then
                     collides = true
@@ -187,7 +185,7 @@ function line_of_sight:draw_arc_mask()
     local direction = self.entity.direction
 
     -- Circle to limit distance.
-    love.graphics.arc("fill", center.x, center.y, self.distance, direction + self.fov / 2, direction - self.fov / 2)
+    love.graphics.circle("fill", center.x, center.y, self.distance)
 end
 
 function line_of_sight:draw()
@@ -197,7 +195,7 @@ function line_of_sight:draw()
     end
 
     love.graphics.stencil(mask_view_area, "replace")
-    -- love.graphics.setStencilTest("equal", 1)
+    love.graphics.setStencilTest("equal", 1)
 
     self:draw_visibility_polygons()
 

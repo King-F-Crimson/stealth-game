@@ -29,14 +29,22 @@ function collision.visibility_triangle_and_aabb_rectangle(triangle, rectangle)
     return false
 end
 
-function collision.arc_and_aabb_rectangle(arc, rectangle)
+function collision.circle_and_aabb_rectangle(circle, rectangle)
     for k, point in pairs(rectangle) do
-        if collision.is_point_in_arc(arc, point) then
+        if collision.is_point_in_circle(circle, point) then
             return true
         end
     end
 
     local rectangle_lines = collision.lines_from_polygon(rectangle)
+
+    for k, line in pairs(rectangle_lines) do
+        local point = collision.line_closest_point_to_circle(circle, line)
+
+        if collision.is_point_in_circle(circle, point) then
+            return true
+        end
+    end
 end
 
 function collision.lines_from_polygon(polygon)
@@ -92,19 +100,14 @@ function collision.sign(p1, p2, p3)
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
 end
 
-function collision.is_point_in_arc(arc, point)
+function collision.is_point_in_circle(circle, point)
     -- Check if point is in range.
-    local distance = vector.dist(point.x, point.y, arc.x, arc.y)
-    if distance > arc.r then
-        return false
-    end
+    local distance = vector.dist(point.x, point.y, circle.x, circle.y)
+    return distance < circle.r
+end
 
-    -- Check if point is in angle.
-    local angle = math.atan(point.x - arc.x, point.y - arc.y)
-
-    local arc_angle_1 = arc.direction + arc.fov / 2
-    local arc_angle_2 = arc.direction - arc.fov / 2
-
+function collision.line_closest_point_to_circle(circle, line)
+    return { x = 0, y = 0 }
 end
 
 -- Currently not used since almost always the entity rectangle will be smaller than the triangle, even if it does not
