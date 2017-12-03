@@ -14,6 +14,7 @@ function world:create(game)
     object:add_entity(entity:create(object.game, entities.player, 32, 32))
     object:add_entity(entity:create(object.game, entities.guard, 64, 64))
     object:add_entity(entity:create(object.game, entities.treasure, 416, 128))
+    object:add_entity(entity:create(object.game, entities.door, 99, 2))
 
     return object
 end

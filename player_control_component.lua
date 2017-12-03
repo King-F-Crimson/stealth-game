@@ -8,6 +8,11 @@ function player_control_component:create(game, entity)
         object.game.observer:add_listener("key_pressed", function(data) object:handle_key_press(data.action) end )
     }
 
+    object.interactable_item_classes = {
+        "treasure",
+        "door",
+    }
+
     object.interactable_item = nil
     object.interact_distance = 24
 
@@ -33,7 +38,11 @@ end
 
 function player_control_component:interact_with_item(item)
     if item.class == "treasure" then
-        print("Chest found!")
+        self.entity.treasure_taken = true
+    elseif item.class == "door" then
+        if self.entity.treasure_taken then
+            print("WIN")
+        end
     end
 end
 
@@ -42,20 +51,22 @@ function player_control_component:get_nearest_interactable_item()
     local distance_to_nearest_item
     local center = self.entity:get_center()
 
-    for k, item in pairs(self.game.world:find_entities_with_class("treasure")) do
-        if nearest_item then
-            local item_center = item:get_center()
-            local distance_to_item = vector.dist(center.x, center.y, item_center.x, item_center.y)
+    for k, class in pairs(self.interactable_item_classes) do
+        for k, item in pairs(self.game.world:find_entities_with_class(class)) do
+            if nearest_item then
+                local item_center = item:get_center()
+                local distance_to_item = vector.dist(center.x, center.y, item_center.x, item_center.y)
 
-            if distance_to_item < distance_to_nearest_item then
+                if distance_to_item < distance_to_nearest_item then
+                    nearest_item = item
+                    local nearest_item_center = nearest_item:get_center()
+                    distance_to_nearest_item = vector.dist(center.x, center.y, nearest_item_center.x, nearest_item_center.y)
+                end
+            else
                 nearest_item = item
                 local nearest_item_center = nearest_item:get_center()
                 distance_to_nearest_item = vector.dist(center.x, center.y, nearest_item_center.x, nearest_item_center.y)
             end
-        else
-            nearest_item = item
-            local nearest_item_center = nearest_item:get_center()
-            distance_to_nearest_item = vector.dist(center.x, center.y, nearest_item_center.x, nearest_item_center.y)
         end
     end
 
