@@ -4,7 +4,7 @@ function game:create(application, args)
     local object = { application = application, observer = application.observer }
     setmetatable(object, {__index = self})
 
-    object.tile_size = 16
+    object.tile_size = 32
 
     object.control = control:create(object)
     object.world = world:create(object)
@@ -25,6 +25,10 @@ function game:destroy()
     self.world:destroy()
 
     observer.remove_listeners_from_object(self)
+end
+
+function game:trigger_win()
+    self.application:change_state(result_screen)
 end
 
 function game:update()

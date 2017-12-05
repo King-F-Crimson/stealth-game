@@ -24,6 +24,7 @@ require("guard_graphics_component")
 require("lines")
 require("angles")
 require("collision")
+require("result_screen")
 
 require("entities")
 

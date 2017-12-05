@@ -39,7 +39,7 @@ function tile_map:create(world)
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     }
 
-    object.tile_size = 16
+    object.tile_size = world.game.tile_size
     object.col_count = #object.tiles[1]
     object.row_count = #object.tiles
     object.w = object.col_count * object.tile_size

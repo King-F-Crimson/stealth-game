@@ -14,7 +14,7 @@ function player_control_component:create(game, entity)
     }
 
     object.interactable_item = nil
-    object.interact_distance = 24
+    object.interact_distance = game.tile_size * 1.5
 
     return object
 end
@@ -41,7 +41,7 @@ function player_control_component:interact_with_item(item)
         self.entity.treasure_taken = true
     elseif item.class == "door" then
         if self.entity.treasure_taken then
-            print("WIN")
+            self.game:trigger_win()
         end
     end
 end
